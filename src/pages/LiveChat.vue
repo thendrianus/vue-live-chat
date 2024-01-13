@@ -21,9 +21,8 @@
     </v-row>
 
     <!-- Chatroom -->
-    <keep-alive>
-      <div :key="componentKey">
-        <v-row v-for="(message, index) in displayMessages" :key="index">
+    <div class="mb-20">
+      <v-row v-for="(message, index) in displayMessages" :key="index">
           <v-col
             class="d-flex"
             :class="message.sender === username ? 'justify-end' : ''"
@@ -62,8 +61,7 @@
             </v-avatar>
           </v-col>
         </v-row>
-      </div>
-    </keep-alive>
+    </div>
 
     <!-- Chat input -->
     <v-footer app fixed>
@@ -102,7 +100,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, nextTick } from "vue";
 import { useChatStore } from "@/store/live-chat";
 
 export default {
@@ -113,7 +111,6 @@ export default {
     const usernameInput = ref("");
 
     const messageContainer = ref(null);
-    const componentKey = ref(0);
 
     const PAGINATION_SIZE = 25;
     const messagesCursor = ref(0);
@@ -157,20 +154,19 @@ export default {
       }
     };
 
-    const scrollToBottom = () => {
+    const scrollToBottom = async () => {
+      await nextTick();
       if (messageContainer.value) {
         messageContainer.value.scrollTop = messageContainer.value.scrollHeight;
       }
     };
 
     const loadPreviousChat = () => {
-      console.log("loadPreviousChat");
       if (messagesCursor.value > 0) {
         messagesCursor.value = Math.max(
           messagesCursor.value - PAGINATION_SIZE,
           0
         );
-        componentKey.value += 1;
       }
     };
 
@@ -198,7 +194,6 @@ export default {
       usernameInput,
       username,
       messagesCursor,
-      componentKey,
       sendMessage,
       saveUsername,
       loadPreviousChat,
