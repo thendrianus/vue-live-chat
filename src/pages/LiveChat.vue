@@ -1,28 +1,30 @@
+<!-- src/components/ChatUI.vue -->
+
 <template>
   <v-container>
     <!-- Chatroom -->
     <v-row v-for="(message, index) in messages" :key="index">
       <v-col
         class="d-flex"
-        :class="{
-          'align-start': message.sender !== 'user',
-          'align-end': message.sender === 'user',
-        }"
       >
-        <v-avatar v-if="message.sender === 'user'" class="mr-3">
+        <v-avatar v-if="message.sender === username" class="mr-3">
           <img :src="userProfilePhoto" alt="User Photo" class="cover-image" />
         </v-avatar>
         <v-card
           min-width="100%"
           :class="{
-            'message-right': message.sender === 'user',
-            'message-left': message.sender !== 'user',
+            'message-right': message.sender === username,
+            'message-left': message.sender !== username,
           }"
         >
           <v-card-text>{{ message.text }}</v-card-text>
         </v-card>
-        <v-avatar v-if="message.sender != 'user'" class="ml-3">
-          <img :src="senderProfilePhoto" alt="Sender Photo" class="cover-image" />
+        <v-avatar v-if="message.sender !== username" class="ml-3">
+          <img
+            :src="senderProfilePhoto"
+            alt="Sender Photo"
+            class="cover-image"
+          />
         </v-avatar>
       </v-col>
     </v-row>
@@ -41,14 +43,16 @@
       </v-container>
     </v-footer>
 
-    <!-- Chat Username Promt -->
+    <!-- Chat Username Prompt -->
     <v-dialog v-model="usernameDialog" persistent>
       <v-card>
-        <v-card-title>
-          Enter Your Username
-        </v-card-title>
+        <v-card-title> Enter Your Username </v-card-title>
         <v-card-text>
-          <v-text-field v-model="usernameInput" label="Username"></v-text-field>
+          <v-text-field
+            :rules="[(v) => !!v || 'Username is required']"
+            v-model="usernameInput"
+            label="Username"
+          ></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -60,52 +64,54 @@
 </template>
 
 <script>
+import { ref, computed } from "vue";
+import { useChatStore } from "@/store/live-chat";
+
 export default {
-  data() {
+  setup() {
+    const chatStore = useChatStore();
+    const newMessage = ref("");
+    const userProfilePhoto = "src/assets/profile.jpg";
+    const senderProfilePhoto = "src/assets/profile.jpg";
+    const usernameDialog = ref(false);
+    const usernameInput = ref("");
+
+    // Load messages from the store
+    const messages = chatStore.messages;
+    const username = computed(() => chatStore.username);
+
+    const sendMessage = () => {
+      if (newMessage.value.trim() !== "") {
+        console.log(username.value)
+        const message = { sender: username.value, text: newMessage.value.trim() };
+        chatStore.addMessage(message);
+        newMessage.value = "";
+      }
+    };
+
+    const saveUsername = () => {
+      if (usernameInput.value.trim() !== "") {
+        chatStore.setUsername(usernameInput.value.trim());
+        usernameInput.value = "";
+        usernameDialog.value = false;
+      }
+    };
+
     return {
-      messages: [
-        { sender: "user", text: "Hello!" },
-        { sender: "sender", text: "Hi there!" },
-        { sender: "user", text: "Hello!" },
-        { sender: "sender", text: "Hi there!" },
-        { sender: "user", text: "Hello!" },
-        { sender: "sender", text: "Hi there!" },
-        { sender: "user", text: "Hello!" },
-        { sender: "sender", text: "Hi there!" },
-        { sender: "user", text: "Hello!" },
-        { sender: "sender", text: "Hi there!" },
-        { sender: "user", text: "Hello!" },
-        { sender: "sender", text: "Hi there!" },
-        { sender: "user", text: "Hello!" },
-        { sender: "sender", text: "Hi there!" },
-        { sender: "user", text: "Hello!" },
-        { sender: "sender", text: "Hi there!" },
-      ],
-      newMessage: "",
-      bottomSheet: true,
-      userProfilePhoto: "src/assets/profile.jpg",
-      senderProfilePhoto: "src/assets/profile.jpg",
-      usernameDialog: false,
-      usernameInput: "",
-      username: ""
+      messages,
+      newMessage,
+      userProfilePhoto,
+      senderProfilePhoto,
+      usernameDialog,
+      usernameInput,
+      username,
+      sendMessage,
+      saveUsername,
     };
   },
   mounted() {
     // Everytime page load will promt username dialog
     this.usernameDialog = true;
-  },
-  methods: {
-    sendMessage() {
-      if (this.newMessage.trim() !== "") {
-        this.messages.push({ sender: "user", text: this.newMessage.trim() });
-        this.newMessage = "";
-      }
-    },
-    saveUsername() {
-      this.username = this.usernameInput;
-      this.usernameInput = "";
-      this.usernameDialog = false;
-    },
   },
 };
 </script>
