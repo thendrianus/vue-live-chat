@@ -73,16 +73,15 @@ export default {
     const newMessage = ref("");
     const userProfilePhoto = "src/assets/profile.jpg";
     const senderProfilePhoto = "src/assets/profile.jpg";
-    const usernameDialog = ref(false);
+    const usernameDialog = ref(true);
     const usernameInput = ref("");
 
     // Load messages from the store
-    const messages = chatStore.messages;
+    const messages = computed(() => chatStore.messages);
     const username = computed(() => chatStore.username);
 
     const sendMessage = () => {
       if (newMessage.value.trim() !== "") {
-        console.log(username.value)
         const message = { sender: username.value, text: newMessage.value.trim() };
         chatStore.addMessage(message);
         newMessage.value = "";
@@ -97,6 +96,10 @@ export default {
       }
     };
 
+    chatStore.loadChatHistory()
+
+    chatStore.subscribeToChatBroadcast()
+
     return {
       messages,
       newMessage,
@@ -108,10 +111,6 @@ export default {
       sendMessage,
       saveUsername,
     };
-  },
-  mounted() {
-    // Everytime page load will promt username dialog
-    this.usernameDialog = true;
   },
 };
 </script>

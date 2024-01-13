@@ -1,35 +1,31 @@
 import { defineStore } from "pinia";
+import chatService from '../services/ChatService'
 
 export const useChatStore = defineStore({
   id: "livechat",
   state: () => ({
-    messages: [
-      { sender: "user", text: "Hello!" },
-      { sender: "sender", text: "Hi there!" },
-      { sender: "user", text: "Hello!" },
-      { sender: "sender", text: "Hi there!" },
-      { sender: "user", text: "Hello!" },
-      { sender: "sender", text: "Hi there!" },
-      { sender: "user", text: "Hello!" },
-      { sender: "sender", text: "Hi there!" },
-      { sender: "user", text: "Hello!" },
-      { sender: "sender", text: "Hi there!" },
-      { sender: "user", text: "Hello!" },
-      { sender: "sender", text: "Hi there!" },
-      { sender: "user", text: "Hello!" },
-      { sender: "sender", text: "Hi there!" },
-      { sender: "user", text: "Hello!" },
-      { sender: "sender", text: "Hi there!" },
-    ],
+    messages: [],
     username: "",
   }),
   actions: {
     addMessage(message) {
       this.messages.push(message);
+      chatService.addMessage(message)
     },
     setUsername(usernameInput) {
-      console.log(usernameInput)
       this.username = usernameInput;
+    },
+    loadChatHistory() {
+      this.messages = chatService.getMessages()
+    },
+    subscribeToChatBroadcast() {
+      chatService.subscribeToBroadcast((newMessage) => {
+        // Handle incoming messages here
+        console.log('Received new message haha:', newMessage);
+        if (newMessage) {
+          this.messages.push(newMessage);
+        }
+      });
     }
   },
 });
