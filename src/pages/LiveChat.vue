@@ -35,14 +35,24 @@
                 class="cover-image"
               />
             </v-avatar>
-            <v-card
-              :class="{
-                'message-right': message.sender === username,
-                'message-left': message.sender !== username,
-              }"
-            >
-              <v-card-text>{{ message.text }}</v-card-text>
-            </v-card>
+            <div>
+              <div
+                class="font-weight-light"
+                :class="{
+                  'text-right': message.sender === username,
+                }"
+              >
+                {{ message.sender }}
+              </div>
+              <v-card
+                :class="{
+                  'message-right': message.sender === username,
+                  'message-left': message.sender !== username,
+                }"
+              >
+                <v-card-text>{{ message.text }}</v-card-text>
+              </v-card>
+            </div>
             <v-avatar v-if="message.sender === username" class="ml-3">
               <img
                 :src="userProfilePhoto"
@@ -124,6 +134,7 @@ export default {
         };
         chatStore.addMessage(message);
         newMessage.value = "";
+        scrollToBottom();
       }
     };
 
