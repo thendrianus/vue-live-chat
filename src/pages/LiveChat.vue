@@ -73,7 +73,7 @@ export default {
     const newMessage = ref("");
     const userProfilePhoto = "src/assets/profile.jpg";
     const senderProfilePhoto = "src/assets/profile.jpg";
-    const usernameDialog = ref(true);
+    const usernameDialog = ref(false);
     const usernameInput = ref("");
 
     // Load messages from the store
@@ -93,12 +93,18 @@ export default {
         chatStore.setUsername(usernameInput.value.trim());
         usernameInput.value = "";
         usernameDialog.value = false;
+
+        chatStore.loadChatHistory()
+        chatStore.subscribeToChatBroadcast()
       }
     };
 
-    chatStore.loadChatHistory()
-
-    chatStore.subscribeToChatBroadcast()
+    if (!chatStore.getUsername()) {
+      usernameDialog.value = true
+    } else {
+      chatStore.loadChatHistory()
+      chatStore.subscribeToChatBroadcast()
+    }
 
     return {
       messages,

@@ -1,15 +1,16 @@
-const STORAGE_KEY = 'chatMessages';
+const CHAT_MESSAGES_STORAGE_KEY = 'chatMessages';
+const USERNAME_SESSION_KEY = 'chatUsername';
 
 export default {
   getMessages() {
-    const storedMessages = localStorage.getItem(STORAGE_KEY);
+    const storedMessages = localStorage.getItem(CHAT_MESSAGES_STORAGE_KEY);
     return JSON.parse(storedMessages) || [];
   },
 
   addMessage(message) {
     const messages = this.getMessages();
     messages.push(message);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    localStorage.setItem(CHAT_MESSAGES_STORAGE_KEY, JSON.stringify(messages));
     this.broadcastMessage(message);
   },
 
@@ -30,4 +31,12 @@ export default {
       }
     });
   },
+
+  getUsername() {
+    return sessionStorage.getItem(USERNAME_SESSION_KEY);
+  },
+
+  setUsername(username) {
+    sessionStorage.setItem(USERNAME_SESSION_KEY, username);
+  }
 };
