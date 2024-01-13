@@ -23,8 +23,9 @@ export const useChatStore = defineStore({
       chatService.setUsername(usernameInput)
       this.getUsername()
     },
-    loadChatHistory() {
+    loadChatHistory(callback) {
       this.messages = chatService.getMessages()
+      callback()
     },
     subscribeToChatBroadcast() {
       chatService.subscribeToBroadcast((newMessage) => {
