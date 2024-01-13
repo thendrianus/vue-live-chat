@@ -1,37 +1,23 @@
-# Vuetify (Default)
+# Vue Chat Application
 
-This is the official scaffolding tool for Vuetify, designed to give you a head start in building your new Vuetify application. It sets up a base template with all the necessary configurations and standard directory structure, enabling you to begin development without the hassle of setting up the project from scratch.
+This is a simple web chat application built with Vue.js and Vuetify. The application allows users to enter their name before joining the chat, and their name is used to identify their messages. The chat supports live updates across multiple browser tabs, and messages are saved in local storage.
 
-## ❗️ Important Links
+## Features
 
-- 📄 [Docs](https://vuetifyjs.com/)
-- 🚨 [Issues](https://issues.vuetifyjs.com/)
-- 🏬 [Store](https://store.vuetifyjs.com/)
-- 🎮 [Playground](https://play.vuetifyjs.com/)
-- 💬 [Discord](https://community.vuetifyjs.com)
+1. **User Authentication:**
+   - Users are prompted to enter their name before joining the chat.
+   - Users data in tab session even after refresh browser tab.
 
-## 💿 Install
+2. **Live Updates Across Tabs:**
+   - Each new browser tab represents a new chat user.
+   - Messages in the chat room are updated in real-time for all open tabs.
 
-Set up your project using your preferred package manager. Use the corresponding command to install the dependencies:
+3. **Message Sending:**
+   - Users can send messages to the chat.
 
-| Package Manager                                                | Command        |
-|---------------------------------------------------------------|----------------|
-| [yarn](https://yarnpkg.com/getting-started)                   | `yarn install` |
-| [npm](https://docs.npmjs.com/cli/v7/commands/npm-install)     | `npm install`  |
-| [pnpm](https://pnpm.io/installation)                          | `pnpm install` |
-| [bun](https://bun.sh/#getting-started)                        | `bun install`  |
-
-After completing the installation, your environment is ready for Vuetify development.
-
-## ✨ Features
-
-- 🖼️ **Optimized Front-End Stack**: Leverage the latest Vue 3 and Vuetify 3 for a modern, reactive UI development experience. [Vue 3](https://v3.vuejs.org/) | [Vuetify 3](https://vuetifyjs.com/en/)
-- 🗃️ **State Management**: Integrated with [Pinia](https://pinia.vuejs.org/), the intuitive, modular state management solution for Vue.
-- 🚦 **Routing and Layouts**: Utilizes Vue Router for SPA navigation and vite-plugin-vue-layouts for organizing Vue file layouts. [Vue Router](https://router.vuejs.org/) | [vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts)
-- ⚡ **Next-Gen Tooling**: Powered by Vite, experience fast cold starts and instant HMR (Hot Module Replacement). [Vite](https://vitejs.dev/)
-- 🧩 **Automated Component Importing**: Streamline your workflow with unplugin-vue-components, automatically importing components as you use them. [unplugin-vue-components](https://github.com/antfu/unplugin-vue-components)
-
-These features are curated to provide a seamless development experience from setup to deployment, ensuring that your Vuetify application is both powerful and maintainable.
+4. **Message History:**
+   - The chat displays message history.
+   - Users can load more messages when scrolling to the top (page size = 25).
 
 ## 💡 Usage
 
@@ -59,19 +45,15 @@ yarn build
 
 Once the build process is completed, your application will be ready for deployment in a production environment.
 
-## 💪 Support Vuetify Development
+## Screenshots
 
-This project is built with [Vuetify](https://vuetifyjs.com/en/), a UI Library with a comprehensive collection of Vue components. Vuetify is an MIT licensed Open Source project that has been made possible due to the generous contributions by our [sponsors and backers](https://vuetifyjs.com/introduction/sponsors-and-backers/). If you are interested in supporting this project, please consider:
+- **User Authentication:**
+  <img src="screenshots/user_authentication.png" alt="User Authentication" width="400" style="display: block; margin: auto;">
 
-- [Requesting Enterprise Support](https://support.vuetifyjs.com/)
-- [Sponsoring John on Github](https://github.com/users/johnleider/sponsorship)
-- [Sponsoring Kael on Github](https://github.com/users/kaelwd/sponsorship)
-- [Supporting the team on Open Collective](https://opencollective.com/vuetify)
-- [Becoming a sponsor on Patreon](https://www.patreon.com/vuetify)
-- [Becoming a subscriber on Tidelift](https://tidelift.com/subscription/npm/vuetify)
-- [Making a one-time donation with Paypal](https://paypal.me/vuetify)
+- **Live Updates Across Tabs:**
+  <img src="screenshots/live_updates1.png" alt="Live Updates Across Tabs 1" width="400" style="display: block; margin: auto;">
+  <img src="screenshots/live_updates2.png" alt="Live Updates Across Tabs 2" width="400" style="display: block; margin: auto;">
 
-## 📑 License
-[MIT](http://opensource.org/licenses/MIT)
-
-Copyright (c) 2016-present Vuetify, LLC
+- **Message History and Load More:**
+  <img src="screenshots/message_history1.png" alt="Message History and Load More 1" width="400" style="display: block; margin: auto;">
+  <img src="screenshots/message_history2.png" alt="Message History and Load More 2" width="400" style="display: block; margin: auto;">

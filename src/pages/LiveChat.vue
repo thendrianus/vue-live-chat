@@ -1,0 +1,244 @@
+<!-- src/components/ChatUI.vue -->
+
+<template>
+  <v-container ref="messageContainer">
+    <!-- load history -->
+    <v-row justify="center" class="mb-2">
+      <v-btn
+        @click="loadPreviousChat"
+        v-if="messagesCursor !== 0"
+        color="primary"
+        variant="text"
+      >
+        More history
+      </v-btn>
+      <p
+        v-if="messagesCursor === 0 && messages.length !== 0"
+        class="font-weight-thin"
+      >
+        No more history
+      </p>
+    </v-row>
+
+    <!-- Chatroom -->
+    <div class="mb-20">
+      <v-row v-for="(message, index) in displayMessages" :key="index">
+          <v-col
+            class="d-flex"
+            :class="message.sender === username ? 'justify-end' : ''"
+          >
+            <v-avatar v-if="message.sender !== username" class="mr-3">
+              <v-sheet color="primary" class="avatar-sheet" tile>
+                <span class="avatar-text">{{
+                  getAvatarText(message.sender)
+                }}</span>
+              </v-sheet>
+            </v-avatar>
+            <div>
+              <div
+                class="font-weight-light"
+                :class="{
+                  'text-right': message.sender === username,
+                }"
+              >
+                {{ message.sender }}
+              </div>
+              <v-card
+                :class="{
+                  'message-right': message.sender === username,
+                  'message-left': message.sender !== username,
+                }"
+              >
+                <v-card-text>{{ message.text }}</v-card-text>
+              </v-card>
+            </div>
+            <v-avatar v-if="message.sender === username" class="ml-3">
+              <v-sheet color="primary" class="avatar-sheet" tile>
+                <span class="avatar-text">{{
+                  getAvatarText(message.sender)
+                }}</span>
+              </v-sheet>
+            </v-avatar>
+          </v-col>
+        </v-row>
+    </div>
+
+    <!-- Chat input -->
+    <v-footer app fixed>
+      <v-container>
+        <v-row class="d-flex">
+          <v-text-field
+            v-model="newMessage"
+            append-icon="mdi-send"
+            variant="solo"
+            label="Start typing"
+            @click:append="sendMessage"
+            type="text"
+          ></v-text-field>
+        </v-row>
+      </v-container>
+    </v-footer>
+
+    <!-- Chat Username Prompt -->
+    <v-dialog v-model="usernameDialog" persistent>
+      <v-card>
+        <v-card-title> Enter Your Username </v-card-title>
+        <v-card-text>
+          <v-text-field
+            :rules="[(v) => !!v || 'Username is required']"
+            v-model="usernameInput"
+            label="Username"
+          ></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="saveUsername" color="primary" class="mr-2">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
+</template>
+
+<script>
+import { ref, computed, onMounted, nextTick } from "vue";
+import { useChatStore } from "@/store/live-chat";
+
+export default {
+  setup() {
+    const chatStore = useChatStore();
+    const newMessage = ref("");
+    const usernameDialog = ref(false);
+    const usernameInput = ref("");
+
+    const messageContainer = ref(null);
+
+    const PAGINATION_SIZE = 25;
+    const messagesCursor = ref(0);
+
+    // Load messages from the store
+    const messages = computed(() => chatStore.messages);
+    const displayMessages = computed(() =>
+      chatStore.messages.slice(messagesCursor.value)
+    );
+
+    const username = computed(() => chatStore.username);
+
+    const sendMessage = () => {
+      if (newMessage.value.trim() !== "") {
+        const message = {
+          sender: username.value,
+          text: newMessage.value.trim(),
+        };
+        chatStore.addMessage(message);
+        newMessage.value = "";
+        scrollToBottom();
+      }
+    };
+
+    const loadChatHistory = () => {
+      chatStore.loadChatHistory(() => {
+        messagesCursor.value = Math.max(
+          messages.value.length - PAGINATION_SIZE,
+          0
+        );
+      });
+    };
+
+    const saveUsername = () => {
+      if (usernameInput.value.trim() !== "") {
+        chatStore.setUsername(usernameInput.value.trim());
+        usernameInput.value = "";
+        usernameDialog.value = false;
+        loadChatHistory();
+        chatStore.subscribeToChatBroadcast();
+      }
+    };
+
+    const scrollToBottom = async () => {
+      await nextTick();
+      if (messageContainer.value) {
+        messageContainer.value.scrollTop = messageContainer.value.scrollHeight;
+      }
+    };
+
+    const loadPreviousChat = () => {
+      if (messagesCursor.value > 0) {
+        messagesCursor.value = Math.max(
+          messagesCursor.value - PAGINATION_SIZE,
+          0
+        );
+      }
+    };
+
+    onMounted(() => {
+      if (!chatStore.getUsername()) {
+        usernameDialog.value = true;
+      } else {
+        loadChatHistory();
+        chatStore.subscribeToChatBroadcast();
+      }
+
+      scrollToBottom();
+    });
+
+    const getAvatarText = (sender) => {
+      // Get the first two characters of the username for the avatar
+      return sender.substring(0, 2).toUpperCase();
+    };
+
+    return {
+      messages,
+      displayMessages,
+      newMessage,
+      usernameDialog,
+      usernameInput,
+      username,
+      messagesCursor,
+      sendMessage,
+      saveUsername,
+      loadPreviousChat,
+      getAvatarText,
+    };
+  },
+};
+</script>
+
+<style scoped>
+.align-start {
+  align-self: flex-start;
+}
+
+.align-end {
+  align-self: flex-end;
+}
+
+.message-left {
+  background-color: #f0f0f0; /* Left message background color */
+  color: #333; /* Left message text color */
+}
+
+.message-right {
+  background-color: #4caf50; /* Right message background color */
+  color: white; /* Right message text color */
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-sheet {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-text {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+</style>
