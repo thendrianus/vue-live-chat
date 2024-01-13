@@ -71,10 +71,12 @@
         <v-row class="d-flex">
           <v-text-field
             v-model="newMessage"
-            label="Type a message"
-            outlined
+            append-icon="mdi-send"
+            variant="solo"
+            label="Start typing"
+            @click:append="sendMessage"
+            type="text"
           ></v-text-field>
-          <v-btn @click="sendMessage" color="primary" class="ml-2">Send</v-btn>
         </v-row>
       </v-container>
     </v-footer>
