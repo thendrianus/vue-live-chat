@@ -29,11 +29,11 @@
             :class="message.sender === username ? 'justify-end' : ''"
           >
             <v-avatar v-if="message.sender !== username" class="mr-3">
-              <img
-                :src="senderProfilePhoto"
-                alt="Sender Photo"
-                class="cover-image"
-              />
+              <v-sheet color="primary" class="avatar-sheet" tile>
+                <span class="avatar-text">{{
+                  getAvatarText(message.sender)
+                }}</span>
+              </v-sheet>
             </v-avatar>
             <div>
               <div
@@ -54,11 +54,11 @@
               </v-card>
             </div>
             <v-avatar v-if="message.sender === username" class="ml-3">
-              <img
-                :src="userProfilePhoto"
-                alt="User Photo"
-                class="cover-image"
-              />
+              <v-sheet color="primary" class="avatar-sheet" tile>
+                <span class="avatar-text">{{
+                  getAvatarText(message.sender)
+                }}</span>
+              </v-sheet>
             </v-avatar>
           </v-col>
         </v-row>
@@ -109,8 +109,6 @@ export default {
   setup() {
     const chatStore = useChatStore();
     const newMessage = ref("");
-    const userProfilePhoto = "src/assets/profile.jpg";
-    const senderProfilePhoto = "src/assets/profile.jpg";
     const usernameDialog = ref(false);
     const usernameInput = ref("");
 
@@ -187,12 +185,15 @@ export default {
       scrollToBottom();
     });
 
+    const getAvatarText = (sender) => {
+      // Get the first two characters of the username for the avatar
+      return sender.substring(0, 2).toUpperCase();
+    };
+
     return {
       messages,
       displayMessages,
       newMessage,
-      userProfilePhoto,
-      senderProfilePhoto,
       usernameDialog,
       usernameInput,
       username,
@@ -201,6 +202,7 @@ export default {
       sendMessage,
       saveUsername,
       loadPreviousChat,
+      getAvatarText,
     };
   },
 };
@@ -229,5 +231,19 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.avatar-sheet {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-text {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
 }
 </style>
