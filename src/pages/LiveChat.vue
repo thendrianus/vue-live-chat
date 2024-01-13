@@ -12,7 +12,10 @@
       >
         More history
       </v-btn>
-      <p v-if="messagesCursor === 0 && messages.length !== 0" class="font-weight-thin">
+      <p
+        v-if="messagesCursor === 0 && messages.length !== 0"
+        class="font-weight-thin"
+      >
         No more history
       </p>
     </v-row>
@@ -21,16 +24,18 @@
     <keep-alive>
       <div :key="componentKey">
         <v-row v-for="(message, index) in displayMessages" :key="index">
-          <v-col class="d-flex">
-            <v-avatar v-if="message.sender === username" class="mr-3">
+          <v-col
+            class="d-flex"
+            :class="message.sender === username ? 'justify-end' : ''"
+          >
+            <v-avatar v-if="message.sender !== username" class="mr-3">
               <img
-                :src="userProfilePhoto"
-                alt="User Photo"
+                :src="senderProfilePhoto"
+                alt="Sender Photo"
                 class="cover-image"
               />
             </v-avatar>
             <v-card
-              min-width="100%"
               :class="{
                 'message-right': message.sender === username,
                 'message-left': message.sender !== username,
@@ -38,10 +43,10 @@
             >
               <v-card-text>{{ message.text }}</v-card-text>
             </v-card>
-            <v-avatar v-if="message.sender !== username" class="ml-3">
+            <v-avatar v-if="message.sender === username" class="ml-3">
               <img
-                :src="senderProfilePhoto"
-                alt="Sender Photo"
+                :src="userProfilePhoto"
+                alt="User Photo"
                 class="cover-image"
               />
             </v-avatar>
@@ -124,7 +129,10 @@ export default {
 
     const loadChatHistory = () => {
       chatStore.loadChatHistory(() => {
-        messagesCursor.value = Math.max(messages.value.length - PAGINATION_SIZE, 0);
+        messagesCursor.value = Math.max(
+          messages.value.length - PAGINATION_SIZE,
+          0
+        );
       });
     };
 
@@ -147,7 +155,10 @@ export default {
     const loadPreviousChat = () => {
       console.log("loadPreviousChat");
       if (messagesCursor.value > 0) {
-        messagesCursor.value = Math.max(messagesCursor.value - PAGINATION_SIZE, 0);
+        messagesCursor.value = Math.max(
+          messagesCursor.value - PAGINATION_SIZE,
+          0
+        );
         componentKey.value += 1;
       }
     };
